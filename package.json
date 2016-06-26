@@ -1,0 +1,19 @@
+{
+  "name": "clusteredPUBSUBnode",
+  "version": "1.0.4",
+  "description": "Clustered redis PUBSUB server",
+  "main": "nosock.js",
+  "dependencies": {
+    "hiredis": "^0.5.0",
+    "ioredis": "^2.1.0",
+    "node-pre-gyp": "^0.6.28",
+    "socket.io": "^1.4.8"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Giancarlo Bonansea",
+  "license": "ISC"
+}

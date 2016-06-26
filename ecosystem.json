@@ -1,0 +1,39 @@
+{
+  "apps" : [{
+    "name": "clusteredPUBSUBnode",
+    "cwd": "/home/pi/cluster/current",
+    "script": "nosock.js",
+    "watch": "nosock.js",
+    "instances"  : 1,
+    "max_restarts" : 10,
+    "exec_mode"  : "cluster",
+    "env": {
+      "NODEPORT": 32402,
+      "NODEIP": "192.168.69.246",
+      "NODE_ENV": "development"
+    },
+    "env_production": {
+      "NODEPORT": 32402,
+      "NODEIP": "192.168.69.246",
+      "NODE_ENV": "production"
+    }
+  }],
+  "deploy" : {
+    "production": {
+      "user": "pi",
+      "host": [
+        "192.168.69.244",
+        "192.168.69.243",
+        "192.168.69.241",
+        "192.168.69.240"
+      ],
+      "ref": "origin/master",
+      "repo": "git@github.com:giancarlobonansea/clusterednode-pubsub.git",
+      "path": "~/cluster",
+      "post-deploy": "npm install && pm2 startOrReload ecosystem.json --env production",
+      "env": {
+        "NODE_ENV": "production"
+      }
+    }
+  }
+}
