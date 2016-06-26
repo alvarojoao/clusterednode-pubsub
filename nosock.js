@@ -2,7 +2,8 @@ var https         = require('https'),
     fs            = require('fs'),
     tls           = require('tls'),
     Redis         = require('ioredis'),
-    cluster = new Redis.Cluster(
+    calculateSlot = require('cluster-key-slot'),
+    cluster       = new Redis.Cluster(
         [
             {port: 6379, host: "192.168.69.246"},
             {port: 6378, host: "192.168.69.246"},
@@ -43,13 +44,7 @@ io.on('connection',function(socket){
 });
 server.listen(process.env.NODEPORT,process.env.NODEIP);
 cluster.on('message', function (channel, message) {
-    var eventMsg = { x: (message / 1024)|0, y: message % 32, h: 0 };
-    cluster.keyslot(message).then(function(hash){
-        eventMsg.h = (hash / 5462)|0;
-        io.volatile.emit('set', eventMsg);
-    },function(err){
-        io.volatile.emit('set', eventMsg);
-    });
+    io.volatile.emit('set', {x: (message / 1024) | 0, y: message % 32, h: (calculateSlot('cn:' + message) / 5462) | 0});
 });
 cluster.subscribe('__keyevent@0__:hset',function(){
     console.log('clusteredPUBSUBnode subscribed to redis live events stream');
