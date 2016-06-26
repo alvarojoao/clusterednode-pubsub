@@ -8,12 +8,14 @@
     "max_restarts" : 10,
     "exec_mode"  : "cluster",
     "env": {
-      "NODEPORT": 32402,
+      "NODEPORT_HTTPREDIS": 32402,
+      "NODEPORT_HTTPNODE": 32401,
       "NODEIP": "192.168.69.246",
       "NODE_ENV": "development"
     },
     "env_production": {
-      "NODEPORT": 32402,
+      "NODEPORT_HTTPREDIS": 32402,
+      "NODEPORT_HTTPNODE": 32401,
       "NODEIP": "192.168.69.246",
       "NODE_ENV": "production"
     }
