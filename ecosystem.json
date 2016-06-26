@@ -22,10 +22,7 @@
     "production": {
       "user": "pi",
       "host": [
-        "192.168.69.244",
-        "192.168.69.243",
-        "192.168.69.241",
-        "192.168.69.240"
+        "192.168.69.246"
       ],
       "ref": "origin/master",
       "repo": "git@github.com:giancarlobonansea/clusterednode-pubsub.git",
