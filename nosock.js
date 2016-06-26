@@ -1,4 +1,3 @@
-'use strict';
 var https         = require('https'),
     fs            = require('fs'),
     tls           = require('tls'),
