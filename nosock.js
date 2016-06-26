@@ -62,7 +62,10 @@ var sioNode = ioN.listen(serverNode);
 sioNode.on('connection', function(socket) {
     console.log('Client connected to clusteredPUBSUBnode (node) socket:' + socket.id);
     socket.on('exec', function(data) {
-        sioRedis.volatile.emit('node', {pi: data.pi, pid: data.pid});
+        sioRedis.volatile.emit('node', {
+            pi:  data.pi,
+            pid: data.pid
+        });
     });
 });
 serverNode.listen(process.env.NODEPORT_HTTPNODE, process.env.NODEIP);
