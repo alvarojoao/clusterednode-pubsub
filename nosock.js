@@ -1,4 +1,5 @@
 var https         = require('https'),
+    http          = require('http'),
     fs            = require('fs'),
     tls           = require('tls'),
     Redis         = require('ioredis'),
@@ -33,10 +34,7 @@ var https         = require('https'),
                                     key:  fs.readFileSync('./nginx-selfsigned.key'),
                                     cert: fs.readFileSync('./nginx-selfsigned.crt')
                                        }),
-    serverNode    = https.createServer({
-                                           key:  fs.readFileSync('./nginx-selfsigned.key'),
-                                           cert: fs.readFileSync('./nginx-selfsigned.crt')
-                                       });
+    serverNode    = http.createServer();
 //
 // Listen to redis changes and notify
 //
