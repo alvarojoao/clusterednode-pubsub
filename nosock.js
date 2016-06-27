@@ -5,6 +5,7 @@ var http2         = require('http2'),
     calculateSlot = require('cluster-key-slot'),
     ioR           = require('socket.io'),
     ioN           = require('socket.io'),
+    debounceTime  = 1000,
     cluster       = new Redis.Cluster(
         [
             {port: 6379, host: "192.168.69.246"},
@@ -54,7 +55,7 @@ cluster.on('message', function (channel, message) {
         });
         setTimeout(function() {
             debounceRedis[idx] = false;
-        }, 1000);
+        }, debounceTime);
     }
 });
 cluster.subscribe('__keyevent@0__:hset',function(){
@@ -69,14 +70,14 @@ var sioNode = ioN.listen(process.env.NODEPORT_HTTPNODE);
 sioNode.on('connection', function(socket) {
     console.log('Client connected to clusteredPUBSUBnode (node) socket:' + socket.id);
     socket.on('exec', function(data) {
-        var idx = 'h' + data.pi + 'p' + data.pid,
+        var idx = 'h' + data.h + 'p' + data.p,
             db  = debounceNode[idx] || false;
         if (!db) {
             debounceNode[idx] = true;
-            sioRedis.volatile.emit('node', {h: mapRasp[data.pi], p: data.pid});
+            sioRedis.volatile.emit('node', {h: mapRasp[data.h], p: datap});
             setTimeout(function() {
                 debounceNode[idx] = false;
-            }, 1000);
+            }, debounceTime);
         }
     });
 });
