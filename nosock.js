@@ -44,7 +44,7 @@ sioRedis.on('connection', function(socket) {
 serverRedis.listen(process.env.NODEPORT_HTTPREDIS, process.env.NODEIP);
 cluster.on('message', function (channel, message) {
     var idx = 'm' + message,
-        db  = debounceRedis[idx] | false;
+        db  = debounceRedis[idx] || false;
     if (!db) {
         sioRedis.volatile.emit('set', {
             x: (message / 1024) | 0,
@@ -70,7 +70,7 @@ sioNode.on('connection', function(socket) {
     console.log('Client connected to clusteredPUBSUBnode (node) socket:' + socket.id);
     socket.on('exec', function(data) {
         var idx = 'h' + data.pi + 'p' + data.pid,
-            db  = debounceNode[idx] | false;
+            db  = debounceNode[idx] || false;
         if (!db) {
             sioRedis.volatile.emit('node', {h: mapRasp[data.pi], p: data.pid});
             debounceNode[idx] = true;
