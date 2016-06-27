@@ -46,12 +46,12 @@ cluster.on('message', function (channel, message) {
     var idx = 'm' + message,
         db  = debounceRedis[idx] || false;
     if (!db) {
+        debounceRedis[idx] = true;
         sioRedis.volatile.emit('set', {
             x: (message / 1024) | 0,
             y: message % 32,
             h: (calculateSlot('cn:' + message) / 5462) | 0
         });
-        debounceRedis[idx] = true;
         setTimeout(function() {
             debounceRedis[idx] = false;
         }, 1000);
@@ -72,8 +72,8 @@ sioNode.on('connection', function(socket) {
         var idx = 'h' + data.pi + 'p' + data.pid,
             db  = debounceNode[idx] || false;
         if (!db) {
-            sioRedis.volatile.emit('node', {h: mapRasp[data.pi], p: data.pid});
             debounceNode[idx] = true;
+            sioRedis.volatile.emit('node', {h: mapRasp[data.pi], p: data.pid});
             setTimeout(function() {
                 debounceNode[idx] = false;
             }, 1000);
