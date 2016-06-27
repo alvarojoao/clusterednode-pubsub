@@ -60,11 +60,11 @@ var sioNode = ioN.listen(process.env.NODEPORT_HTTPNODE);
 sioNode.on('connection', function(socket) {
     console.log('Client connected to clusteredPUBSUBnode (node) socket:' + socket.id);
     socket.on('exec', function(data) {
-        var idx = data,
-            db  = debounceNode[data] | false;
+        var idx = 'h' + data.pi + 'p' + data.pid,
+            db  = debounceNode[idx] | false;
         if (!db) {
             sioRedis.volatile.emit('node', {h: mapRasp[data.pi], p: data.pid});
-            debounceNode[data] = true;
+            debounceNode[idx] = true;
             setTimeout(function() {
                 debounceNode[idx] = false;
             }, 1000);
