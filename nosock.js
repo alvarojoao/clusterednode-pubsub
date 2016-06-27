@@ -59,7 +59,7 @@ var sioNode = ioN.listen(process.env.NODEPORT_HTTPNODE);
 sioNode.on('connection', function(socket) {
     console.log('Client connected to clusteredPUBSUBnode (node) socket:' + socket.id);
     socket.on('exec', function(data) {
-        sioRedis.emit('node', {h: mapRasp[data.pi], p: data.pid});
+        sioRedis.volatile.emit('node', {h: mapRasp[data.pi], p: data.pid});
     });
 });
 //
@@ -69,7 +69,6 @@ process.on('SIGINT', function() {
     sioRedis.close();
     serverRedis.close();
     sioNode.close();
-    serverNode.close();
     console.log('clusteredPUBSUBnode HTTPS servers (redis/node) closed');
     cluster.pipeline().unsubscribe('__keyevent@0__:hset').quit().exec();
     console.log('clusteredPUBSUBnode redis connection closed');
