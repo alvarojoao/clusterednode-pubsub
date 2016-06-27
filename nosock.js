@@ -74,7 +74,7 @@ sioNode.on('connection', function(socket) {
             db  = debounceNode[idx] || false;
         if (!db) {
             debounceNode[idx] = true;
-            sioRedis.volatile.emit('node', {h: mapRasp[data.h], p: datap});
+            sioRedis.volatile.emit('node', {h: mapRasp[data.h], p: data.p});
             setTimeout(function() {
                 debounceNode[idx] = false;
             }, debounceTime);
