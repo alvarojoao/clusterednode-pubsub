@@ -54,12 +54,21 @@ cluster.subscribe('__keyevent@0__:hset',function(){
 //
 // Listen to node executions and notify
 //
+var debounceNode = {};
 var mapRasp = {raspberrypi2: 0, raspberrypi3: 1, raspberrypi5: 2, raspberrypi6: 3};
 var sioNode = ioN.listen(process.env.NODEPORT_HTTPNODE);
 sioNode.on('connection', function(socket) {
     console.log('Client connected to clusteredPUBSUBnode (node) socket:' + socket.id);
     socket.on('exec', function(data) {
-        sioRedis.volatile.emit('node', {h: mapRasp[data.pi], p: data.pid});
+        var idx = data,
+            db  = debounceNode[data] | false;
+        if (!db) {
+            sioRedis.volatile.emit('node', {h: mapRasp[data.pi], p: data.pid});
+            debounceNode[data] = true;
+            setTimeout(function() {
+                debounceNode[idx] = false;
+            }, 1000);
+        }
     });
 });
 //
