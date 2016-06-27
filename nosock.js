@@ -32,10 +32,6 @@ var http2         = require('http2'),
     serverRedis   = http2.createServer({
                                     key:  fs.readFileSync('./nginx-selfsigned.key'),
                                     cert: fs.readFileSync('./nginx-selfsigned.crt')
-                                       }),
-    serverNode    = http2.createServer({
-                                           key:  fs.readFileSync('./nginx-selfsigned.key'),
-                                           cert: fs.readFileSync('./nginx-selfsigned.crt')
                                        });
 //
 // Listen to redis changes and notify
@@ -59,14 +55,13 @@ cluster.subscribe('__keyevent@0__:hset',function(){
 // Listen to node executions and notify
 //
 var mapRasp = {raspberrypi2: 0, raspberrypi3: 1, raspberrypi5: 2, raspberrypi6: 3};
-var sioNode = ioN.listen(serverNode);
+var sioNode = ioN.listen(process.env.NODEPORT_HTTPNODE);
 sioNode.on('connection', function(socket) {
     console.log('Client connected to clusteredPUBSUBnode (node) socket:' + socket.id);
     socket.on('exec', function(data) {
-        sioRedis.volatile.emit('node', mapRasp[data.pi] + ',' + data.pid);
+        sioRedis.volatile.emit('node', {h: mapRasp[data.pi], p: data.pid});
     });
 });
-serverNode.listen(process.env.NODEPORT_HTTPNODE, process.env.NODEIP);
 //
 // Graceful shutdown
 //
