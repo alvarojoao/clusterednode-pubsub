@@ -42,7 +42,7 @@ sioRedis.on('connection', function(socket) {
 });
 serverRedis.listen(process.env.NODEPORT_HTTPREDIS, process.env.NODEIP);
 cluster.on('message', function (channel, message) {
-    sioRedis.emit('set', {
+    sioRedis.volatile.emit('set', {
         x: (message / 1024) | 0,
         y: message % 32,
         h: (calculateSlot('cn:' + message) / 5462) | 0
