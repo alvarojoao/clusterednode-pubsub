@@ -36,17 +36,26 @@ var http2         = require('http2'),
 //
 // Listen to redis changes and notify
 //
+var debounceRedis = {};
 var sioRedis = ioR.listen(serverRedis);
 sioRedis.on('connection', function(socket) {
     console.log('Client connected to clusteredPUBSUBnode (redis) socket:' + socket.id);
 });
 serverRedis.listen(process.env.NODEPORT_HTTPREDIS, process.env.NODEIP);
 cluster.on('message', function (channel, message) {
-    sioRedis.volatile.emit('set', {
-        x: (message / 1024) | 0,
-        y: message % 32,
-        h: (calculateSlot('cn:' + message) / 5462) | 0
-    });
+    var idx = 'm' + message,
+        db  = debounceRedis[idx] | false;
+    if (!db) {
+        sioRedis.volatile.emit('set', {
+            x: (message / 1024) | 0,
+            y: message % 32,
+            h: (calculateSlot('cn:' + message) / 5462) | 0
+        });
+        debounceRedis[idx] = true;
+        setTimeout(function() {
+            debounceRedis[idx] = false;
+        }, 1000);
+    }
 });
 cluster.subscribe('__keyevent@0__:hset',function(){
     console.log('clusteredPUBSUBnode subscribed to redis live events stream');
