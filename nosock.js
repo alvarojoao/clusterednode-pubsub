@@ -1,5 +1,4 @@
-var https         = require('https'),
-    http          = require('http'),
+var http2         = require('http2'),
     fs            = require('fs'),
     tls           = require('tls'),
     Redis         = require('ioredis'),
@@ -30,11 +29,14 @@ var https         = require('https'),
             }
         }
     ),
-    serverRedis   = https.createServer({
+    serverRedis   = http2.createServer({
                                     key:  fs.readFileSync('./nginx-selfsigned.key'),
                                     cert: fs.readFileSync('./nginx-selfsigned.crt')
                                        }),
-    serverNode    = http.createServer();
+    serverNode    = http2.createServer({
+                                           key:  fs.readFileSync('./nginx-selfsigned.key'),
+                                           cert: fs.readFileSync('./nginx-selfsigned.crt')
+                                       });
 //
 // Listen to redis changes and notify
 //
