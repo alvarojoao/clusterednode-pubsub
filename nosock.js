@@ -5,7 +5,7 @@ var http2         = require('http2'),
     calculateSlot = require('cluster-key-slot'),
     ioR           = require('socket.io'),
     ioN           = require('socket.io'),
-    debounceTime  = 1000,
+    debounceTime  = 750,
     cluster       = new Redis.Cluster(
         [
             {port: 6379, host: "192.168.69.246"},
