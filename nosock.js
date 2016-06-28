@@ -113,6 +113,7 @@ sioNode.on('connection', function(socket) {
     // receive register data from new connection from nodeworker2
     //
     socket.on('register', function(data) {
+        console.log('Nodeworker2 registered info: ' + JSON.stringify(data));
         nodeClients[socket.id] = data;
         mapCPU[data.h].pAr[mapCPU[data.h].pAr.indexOf(0)] = data.p;
         mapCPU[data.h].p['p' + data.p] = {
@@ -124,6 +125,7 @@ sioNode.on('connection', function(socket) {
     // unregister nodeworker2 that disconnected
     //
     socket.on('disconnect', function() {
+        console.log('Nodeworker2 ' + nodeClients[socket.id] + ' disconnected');
         if (nodeClients[socket.id] !== undefined) {
             var hStr = nodeClients[socket.id].h,
                 pStr = 'p' + nodeClients[socket.id].p;
