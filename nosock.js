@@ -41,6 +41,7 @@ var debounceRedis = {};
 var sioRedis = ioR.listen(serverRedis);
 sioRedis.on('connection', function(socket) {
     console.log('Client connected to clusteredPUBSUBnode (redis) socket:' + socket.id);
+    socket.emit('nodeclients', prepareClientsMatrix());
 });
 serverRedis.listen(process.env.NODEPORT_HTTPREDIS, process.env.NODEIP);
 cluster.on('message', function (channel, message) {
@@ -48,7 +49,7 @@ cluster.on('message', function (channel, message) {
         db  = debounceRedis[idx] || false;
     if (!db) {
         debounceRedis[idx] = true;
-        sioRedis.volatile.emit('set', {
+        sioRedis.volatile.emit('redis', {
             x: (message / 1024) | 0,
             y: message % 32,
             h: (calculateSlot('cn:' + message) / 5462) | 0
@@ -65,18 +66,85 @@ cluster.subscribe('__keyevent@0__:hset',function(){
 // Listen to node executions and notify
 //
 var debounceNode = {};
-var mapRasp = {raspberrypi2: 0, raspberrypi3: 1, raspberrypi5: 2, raspberrypi6: 3};
+var nodeClients = {};
+var mapCPU = {raspberrypi2: {h: 0,
+    pAr:                        [0,
+                                 0,
+                                 0,
+                                 0],
+    p:                          {}
+},
+    raspberrypi3:           {
+        h:   1,
+        pAr: [0,
+              0,
+              0,
+              0],
+        p:   {}
+    },
+    raspberrypi5:           {
+        h:   2,
+        pAr: [0,
+              0,
+              0,
+              0],
+        p:   {}
+    },
+    raspberrypi6:           {
+        h:   3,
+        pAr: [0,
+              0,
+              0,
+              0],
+        p:   {}
+    }
+};
+//
+// start listening on NODE port to receive node calls notifications
+//
 var sioNode = ioN.listen(process.env.NODEPORT_HTTPNODE);
+//
+// on each socket connection from a nodeworker2 process
+//
 sioNode.on('connection', function(socket) {
     console.log('Client connected to clusteredPUBSUBnode (node) socket:' + socket.id);
-    socket.on('exec', function(data) {
-        var idx = 'h' + data.h + 'p' + data.p,
-            db  = debounceNode[idx] || false;
-        if (!db) {
-            debounceNode[idx] = true;
-            sioRedis.volatile.emit('node', {h: mapRasp[data.h], p: data.p});
+    //
+    // receive register data from new connection from nodeworker2
+    //
+    socket.on('register', function(data) {
+        nodeClients[socket.id] = data;
+        mapCPU[data.h].pAr[mapCPU[data.h].pAr.indexOf(0)] = data.p;
+        mapCPU[data.h].p['p' + data.p] = {
+            pIdx: mapCPU[data.h].pAr.indexOf(data.p),
+            db:   false
+        };
+    });
+    //
+    // unregister nodeworker2 that disconnected
+    //
+    socket.on('disconnect', function() {
+        if (nodeClients[socket.id] !== undefined) {
+            var hStr = nodeClients[socket.id].h,
+                pStr = 'p' + nodeClients[socket.id].p;
+            mapCPU[hStr].pAr[mapCPU[hStr].p[pStr]] = 0;
+            delete mapCPU[hStr].p[pStr];
+            delete nodeClients[socket.id];
+        }
+    });
+    //
+    // receive nodeworker2 notification and debounce/dispatch a new message to app.simulator.js
+    //
+    socket.on('nodecall', function(data) {
+        var hIdx = data.h,
+            pIdx = 'p' + data.p;
+        if (!mapCPU[hIdx].p[pIdx].db) {
+            mapCPU[hIdx].p[pIdx].db = true;
+            sioRedis.volatile.emit('node', {
+                h: mapCPU[hIdx].h,
+                p: mapCPU[hIdx].p[pIdx].pIdx
+            });
             setTimeout(function() {
-                debounceNode[idx] = false;
+                mapCPU[hIdx].p[pIdx].db = false;
             }, debounceTime);
         }
     });
