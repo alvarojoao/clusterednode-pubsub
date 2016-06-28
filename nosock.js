@@ -31,8 +31,8 @@ var http2         = require('http2'),
         }
     ),
     serverRedis   = http2.createServer({
-                                    key:  fs.readFileSync('./nginx-selfsigned.key'),
-                                    cert: fs.readFileSync('./nginx-selfsigned.crt')
+                                           key:  fs.readFileSync('./nginx-selfsigned.key'),
+                                           cert: fs.readFileSync('./nginx-selfsigned.crt')
                                        });
 //
 // Listen to redis changes and notify
@@ -41,10 +41,9 @@ var debounceRedis = {};
 var sioRedis = ioR.listen(serverRedis);
 sioRedis.on('connection', function(socket) {
     console.log('Client connected to clusteredPUBSUBnode (redis) socket:' + socket.id);
-    socket.emit('nodeclients', prepareClientsMatrix());
 });
 serverRedis.listen(process.env.NODEPORT_HTTPREDIS, process.env.NODEIP);
-cluster.on('message', function (channel, message) {
+cluster.on('message', function(channel, message) {
     var idx = 'm' + message,
         db  = debounceRedis[idx] || false;
     if (!db) {
@@ -59,7 +58,7 @@ cluster.on('message', function (channel, message) {
         }, debounceTime);
     }
 });
-cluster.subscribe('__keyevent@0__:hset',function(){
+cluster.subscribe('__keyevent@0__:hset', function() {
     console.log('clusteredPUBSUBnode subscribed to redis live events stream');
 });
 //
@@ -67,14 +66,16 @@ cluster.subscribe('__keyevent@0__:hset',function(){
 //
 var debounceNode = {};
 var nodeClients = {};
-var mapCPU = {raspberrypi2: {h: 0,
-    pAr:                        [0,
-                                 0,
-                                 0,
-                                 0],
-    p:                          {}
-},
-    raspberrypi3:           {
+var mapCPU = {
+    raspberrypi2: {
+        h:   0,
+        pAr: [0,
+              0,
+              0,
+              0],
+        p:   {}
+    },
+    raspberrypi3: {
         h:   1,
         pAr: [0,
               0,
@@ -82,7 +83,7 @@ var mapCPU = {raspberrypi2: {h: 0,
               0],
         p:   {}
     },
-    raspberrypi5:           {
+    raspberrypi5: {
         h:   2,
         pAr: [0,
               0,
@@ -90,7 +91,7 @@ var mapCPU = {raspberrypi2: {h: 0,
               0],
         p:   {}
     },
-    raspberrypi6:           {
+    raspberrypi6: {
         h:   3,
         pAr: [0,
               0,
