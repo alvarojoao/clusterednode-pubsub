@@ -5,7 +5,7 @@ var http2         = require('http2'),
     calculateSlot = require('cluster-key-slot'),
     ioR           = require('socket.io'),
     ioN           = require('socket.io'),
-    debounceTime  = 750,
+    debounceTime  = 500,
     cluster       = new Redis.Cluster(
         [
             {port: 6379, host: "192.168.69.246"},
@@ -116,10 +116,7 @@ sioNode.on('connection', function(socket) {
         console.log('Nodeworker2 registered info: ' + JSON.stringify(data));
         nodeClients[socket.id] = data;
         mapCPU[data.h].pAr[mapCPU[data.h].pAr.indexOf(0)] = data.p;
-        mapCPU[data.h].p['p' + data.p] = {
-            pIdx: mapCPU[data.h].pAr.indexOf(data.p),
-            db:   false
-        };
+        mapCPU[data.h].p['p' + data.p] = mapCPU[data.h].pAr.indexOf(data.p);
     });
     //
     // unregister nodeworker2 that disconnected
@@ -140,16 +137,10 @@ sioNode.on('connection', function(socket) {
     socket.on('nodecall', function(data) {
         var hIdx = data.h,
             pIdx = 'p' + data.p;
-        if (!mapCPU[hIdx].p[pIdx].db) {
-            mapCPU[hIdx].p[pIdx].db = true;
-            sioRedis.volatile.emit('node', {
-                h: mapCPU[hIdx].h,
-                p: mapCPU[hIdx].p[pIdx].pIdx
-            });
-            setTimeout(function() {
-                mapCPU[hIdx].p[pIdx].db = false;
-            }, debounceTime);
-        }
+        sioRedis.volatile.emit('node', {
+            h: mapCPU[hIdx].h,
+            p: mapCPU[hIdx].p[pIdx]
+        });
     });
 });
 //
