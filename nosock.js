@@ -7,12 +7,12 @@ var http2         = require('http2'),
     debounceTime  = 500,
     cluster       = new Redis.Cluster(
         [
-            {port: 6379, host: "192.168.69.246"},
-            {port: 6378, host: "192.168.69.246"},
-            {port: 6377, host: "192.168.69.246"},
-            {port: 6379, host: "192.168.69.245"},
-            {port: 6378, host: "192.168.69.245"},
-            {port: 6377, host: "192.168.69.245"}
+            {port: 6379, host: "192.168.69.238"},
+            {port: 6378, host: "192.168.69.238"},
+            {port: 6377, host: "192.168.69.238"},
+            {port: 6379, host: "192.168.69.237"},
+            {port: 6378, host: "192.168.69.237"},
+            {port: 6377, host: "192.168.69.237"}
         ],
         {
             enableReadyCheck:        true,
