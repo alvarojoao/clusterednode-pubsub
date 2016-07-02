@@ -69,5 +69,5 @@ process.on('SIGINT', function() {
     console.log('clusteredPUBSUBnode websocket & HTTP/2 server connections closed');
     cluster.pipeline().unsubscribe('__keyevent@0__:hset').quit().exec();
     console.log('clusteredPUBSUBnode redis connection closed');
-    setTimeout(function() { process.exit(0); }, 500);
+    setTimeout(function() { process.exit(0); }, 450);
 });
