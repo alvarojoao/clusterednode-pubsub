@@ -2,6 +2,7 @@
   "apps" : [{
     "name": "clusteredPUBSUBnode",
     "cwd": "/home/pi/cluster/current",
+    "watch": false,
     "source_map_support": true,
     "script": "nosock.js",
     "instances"  : 1,
