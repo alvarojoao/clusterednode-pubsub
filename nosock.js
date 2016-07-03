@@ -36,14 +36,15 @@ var http2         = require('http2'),
 //
 // Listen to redis changes and notify
 //
-var debounceRedis = {};
+var debounceRedis = [false];
+debounceRedis.length = 16384;
 var sioRedis = ioR.listen(serverRedis);
 sioRedis.on('connection', function(socket) {
     console.log('Client connected to clusteredPUBSUBnode (redis) socket:' + socket.id);
 });
 serverRedis.listen(process.env.NODEPORT_HTTPREDIS, process.env.NODEIP);
 cluster.on('message', function(channel, message) {
-    var idx = 'm' + message,
+    var idx = message,
         db  = debounceRedis[idx] || false;
     if (!db) {
         debounceRedis[idx] = true;
@@ -69,5 +70,5 @@ process.on('SIGINT', function() {
     console.log('clusteredPUBSUBnode websocket & HTTP/2 server connections closed');
     cluster.pipeline().unsubscribe('__keyevent@0__:hset').quit().exec();
     console.log('clusteredPUBSUBnode redis connection closed');
-    setTimeout(function() { process.exit(0); }, 450);
+    setTimeout(function() { process.exit(0); }, 300);
 });
