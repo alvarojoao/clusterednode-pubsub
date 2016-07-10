@@ -1,18 +1,19 @@
 {
   "name": "clusteredPUBSUBnode",
-  "version": "1.0.5",
+  "version": "1.0.6",
   "description": "Clustered redis PUBSUB server",
   "main": "nosock.js",
   "dependencies": {
-    "http2": "^3.3.4",
-    "hiredis": "^0.5.0",
-    "ioredis": "^2.1.0",
     "cluster-key-slot": "^1.0.6",
+    "hiredis": "^0.5.0",
+    "http2": "^3.3.4",
+    "ioredis": "^2.2.0",
+    "nan": "^2.3.5",
+    "node-pre-gyp": "^0.6.29",
+    "pmx": "^0.6.2",
     "socket.io": "^1.4.8",
-	"pmx": "^0.6.2",
-	"nan": "^2.3.5",
-	"v8-profiler": "^5.6.5",
-    "node-pre-gyp": "^0.6.28"
+    "uglify-js": "^2.7.0",
+    "v8-profiler": "^5.6.5"
   },
   "devDependencies": {},
   "scripts": {
