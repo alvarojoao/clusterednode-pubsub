@@ -10,10 +10,12 @@
     "exec_mode"  : "cluster",
     "env": {
       "NODEPORT_HTTPREDIS": 33331,
+      "NODEIP_LVS": "192.168.69.233",
       "NODE_ENV": "development"
     },
     "env_production": {
       "NODEPORT_HTTPREDIS": 33331,
+      "NODEIP_LVS": "192.168.69.233",
       "NODE_ENV": "production"
     }
   }],
