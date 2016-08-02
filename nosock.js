@@ -14,7 +14,8 @@ var http2         = require('http2'),
     ioR           = require('socket.io'),
     os            = require('os'),
     net           = os.networkInterfaces(),
-    netIf         = (net.eth1 === undefined) ? '127.0.0.1' : net.eth1[0].address,
+//    netIf         = (net.eth1 === undefined) ? '127.0.0.1' : net.eth1[0].address,
+    netIf         = '192.168.69.233',
     debounceTime  = 500,
     cluster       = new Redis.Cluster(
         [
