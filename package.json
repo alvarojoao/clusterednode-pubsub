@@ -1,6 +1,6 @@
 {
   "name": "clusteredPUBSUBnode",
-  "version": "1.0.7",
+  "version": "1.0.8",
   "description": "Clustered redis PUBSUB server",
   "main": "nosock.js",
   "dependencies": {
