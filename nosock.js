@@ -12,6 +12,9 @@ var http2         = require('http2'),
     Redis         = require('ioredis'),
     calculateSlot = require('cluster-key-slot'),
     ioR           = require('socket.io'),
+    os            = require('os'),
+    net           = os.networkInterfaces(),
+    netIf         = (net.eth1 === undefined) ? '127.0.0.1' : net.eth1[0].address,
     debounceTime  = 500,
     cluster       = new Redis.Cluster(
         [
@@ -50,7 +53,7 @@ var sioRedis = ioR.listen(serverRedis);
 sioRedis.on('connection', function(socket) {
     console.log('Client connected to clusteredPUBSUBnode (redis) socket:' + socket.id);
 });
-serverRedis.listen(process.env.NODEPORT_HTTPREDIS, process.env.NODEIP);
+serverRedis.listen(process.env.NODEPORT_HTTPREDIS, netIf);
 cluster.on('message', function(channel, message) {
     var idx = message,
         db  = debounceRedis[idx] || false;

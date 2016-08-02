@@ -10,12 +10,10 @@
     "exec_mode"  : "cluster",
     "env": {
       "NODEPORT_HTTPREDIS": 33331,
-      "NODEIP": "192.168.69.238",
       "NODE_ENV": "development"
     },
     "env_production": {
       "NODEPORT_HTTPREDIS": 33331,
-      "NODEIP": "192.168.69.238",
       "NODE_ENV": "production"
     }
   }],
@@ -23,7 +21,8 @@
     "production": {
       "user": "pi",
       "host": [
-        "192.168.69.238"
+        "192.168.69.238",
+        "192.168.69.237"
       ],
       "ref": "origin/master",
       "repo": "git@github.com:giancarlobonansea/clusterednode-pubsub.git",
