@@ -50,7 +50,8 @@ var sioRedis = ioR.listen(serverRedis);
 sioRedis.on('connection', function(socket) {
     console.log('Client connected to clusteredPUBSUBnode (redis) socket:' + socket.id);
 });
-serverRedis.listen(process.env.NODEPORT_HTTPREDIS, process.env.NODEIP_LVS);
+//serverRedis.listen(process.env.NODEPORT_HTTPREDIS, process.env.NODEIP_LVS);
+serverRedis.listen(process.env.NODEPORT_HTTPREDIS);
 cluster.on('message', function(channel, message) {
     var idx = message,
         db  = debounceRedis[idx] || false;
